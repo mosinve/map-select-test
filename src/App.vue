@@ -4,7 +4,7 @@
                  @map-selected = 'onSelected'
                  @map-added    = 'onAdded'
                  :source-data  = 'sourceData'></source-list>
-    <map-cmp ref = 'map'></map-cmp>
+    <div id='map'></div>
     <aside id = 'selection'>
       <ul class = 'list-group'>
         <li class = 'list-group-item'
@@ -23,9 +23,9 @@
 </template>
 
 <script>
+import leaflet from "leaflet";
 import SourceList from "./components/SourceList";
 import sourceData from "./sourceData";
-import MapCmp from "./components/MapCmp";
 import "leaflet/dist/leaflet.css";
 import "bootstrap/dist/css/bootstrap.css";
 
@@ -33,18 +33,49 @@ export default {
   name: "app",
 
   components: {
-    MapCmp,
     SourceList
   },
 
   data() {
     return {
       sourceData,
+      map: null,
       selected: []
     };
   },
 
+  mounted() {
+    this.map = leaflet.map("map").setView([51.505, -0.09], 13);
+
+    leaflet
+      .tileLayer(
+        "https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}",
+        {
+          maxZoom: 18,
+          id: "mapbox.streets",
+          accessToken:
+            "pk.eyJ1IjoiY2loIiwiYSI6ImNqamZ1bHV3czAyNzkzcXF1NzFxeHcwdXMifQ.zAzzFcN-vzWpbg-el2ExEw"
+        }
+      )
+      .addTo(this.map);
+  },
+
   methods: {
+    addMarker(markerData) {
+      const marker = leaflet
+        .circle(markerData.item.coords, {
+          color: "red",
+          fillColor: "#f03",
+          fillOpacity: 0.5,
+          radius: 500,
+          title: markerData.item.name
+        })
+        .addTo(this.map);
+      marker.on("mouseover", () => {
+        marker.remove();
+        markerData.handleSelect(markerData);
+      });
+    },
     onSelected(data) {
       this.selected.push(data);
     },
@@ -56,14 +87,14 @@ export default {
         clickedEl.$children.forEach(child => child.$el.click());
       }
       if (clickedEl.item.coords) {
-        this.$refs.map.addMarker(clickedEl);
+        this.addMarker(clickedEl);
         clickedEl.added = true;
       }
     },
     remove(target) {
       const currentItem = this.selected[target];
       if (currentItem.$parent.selected) {
-        this.$refs.map.addMarker(currentItem);
+        this.addMarker(currentItem);
         currentItem.added = true;
       } else {
         currentItem.added = false;
