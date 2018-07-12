@@ -2,7 +2,7 @@
   <div id="app">
     <source-list id            = 'source'
                  @map-selected = 'onSelected'
-                 @map-added    = 'onAdded'
+                 @map-added    = 'addToMap'
                  :source-data  = 'sourceData'></source-list>
     <div id='map'></div>
     <aside id = 'selection'>
@@ -79,9 +79,10 @@ export default {
     onSelected(data) {
       this.selected.push(data);
     },
-    onAdded(e) {
+    addToMap(e) {
       const clickedEl = e.target.__vue__;
-      if (clickedEl.selected || clickedEl.added) return;
+      if (clickedEl.added) return;
+
       if (clickedEl.$children.length) {
         clickedEl.selected = true;
         clickedEl.$children.forEach(child => child.$el.click());
