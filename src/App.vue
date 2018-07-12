@@ -1,15 +1,20 @@
 <template>
   <div id="app">
-    <source-list id = 'source'
+    <source-list id            = 'source'
                  @map-selected = 'onSelected'
-                 @map-added = 'onAdded'
-                 :source-data='sourceData'></source-list>
-    <map-cmp ref='map'></map-cmp>
-    <aside id='selection'>
-      <ul class="list-group">
-        <li class="list-group-item" v-for='(item, index) in selected' :key='index'>{{ item.item.coords }}
-          <button type="button" class="close" aria-label="Close" @click='remove(index)'>
-            <span aria-hidden="true">&times;</span>
+                 @map-added    = 'onAdded'
+                 :source-data  = 'sourceData'></source-list>
+    <map-cmp ref = 'map'></map-cmp>
+    <aside id = 'selection'>
+      <ul class = 'list-group'>
+        <li class = 'list-group-item'
+            v-for = '(item, index) in selected' 
+            :key  = 'index'> {{ item.item.coords }}
+          <button type       = 'button'
+                  class      = 'close'
+                  aria-label = 'Close'
+                  @click     = 'remove(index)'>
+            <span aria-hidden = 'true'>&times;</span>
           </button>
         </li>
       </ul>
@@ -26,7 +31,12 @@ import "bootstrap/dist/css/bootstrap.css";
 
 export default {
   name: "app",
-  components: { MapCmp, SourceList },
+
+  components: {
+    MapCmp,
+    SourceList
+  },
+
   data() {
     return {
       sourceData,
