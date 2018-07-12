@@ -100,7 +100,7 @@ export default {
         currentItem.added = false;
       }
 
-      this.selected = this.selected.filter((item, index) => index !== target);
+      this.selected.splice(target, 1);
     }
   }
 };
